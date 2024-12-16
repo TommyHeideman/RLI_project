@@ -145,9 +145,12 @@ Mean: 0.8142
 </code>
 </pre>
 
-<h3>Step 5: Adding Results to Power BI</h3>
+<h3>Step 5: Saving the Models</h3>
+<p>The trained models were saved as:</p>
 <ul>
-    <li>The final predictions and enhanced geographic details were integrated back into the Power BI report for visualization and analysis.</li>
+    <li><strong>random_forest_modelV3.joblib</strong></li>
+    <li><strong>xgboost_modelV3.joblib</strong></li>
+    <li><strong>stacking_modelV3.joblib</strong></li>
 </ul>
 
 <hr>
@@ -226,21 +229,8 @@ data_with_states_regions <- data %>%
 
 <hr>
 
-<h2>5. Execution Steps</h2>
-
-<h3>Python Workflow</h3>
-<ul>
-    <li>Train the model:
-        <pre><code>python train_model.py</code></pre>
-    </li>
-    <li>Generate predictions:
-        <pre><code>python predict_model.py</code></pre>
-    </li>
-</ul>
-
-<h3>R Workflow</h3>
-<p>Run the R script to enhance predictions with geographic information:</p>
-<pre><code>source("merge_with_zipcodes.R")</code></pre>
+<h2>5. Integration into Power BI</h2>
+<p>The final predictions, along with enhanced geographic information, were added back into the Power BI report for further visualization and reporting. This allowed stakeholders to analyze predictions alongside state and city-level insights directly in the Power BI dashboard.</p>
 
 <hr>
 
@@ -257,3 +247,19 @@ pip install pandas numpy scikit-learn xgboost matplotlib joblib
 <h3>R Packages</h3>
 <p>Install the required packages:</p>
 <pre>
+<code>
+install.packages(c("zipcodeR", "readxl", "writexl", "dplyr"))
+</code>
+</pre>
+
+<hr>
+
+<h2>7. Notes</h2>
+<ul>
+    <li>The project efficiently processes large datasets using chunk-based operations.</li>
+    <li>ZIP codes are formatted to ensure successful merging across all steps.</li>
+    <li>Power BI adjustments aligned the datasets before modeling.</li>
+</ul>
+
+</body>
+</html>
