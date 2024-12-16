@@ -71,7 +71,7 @@ merged_data <- RLI_original_data %>%
 </pre>
 <p>Save the resulting dataset as:</p>
 <ul>
-    <li><strong>RLI_Census_MergedData.csv</strong></li>
+    <li><strong>RLI_combined_Census_Sex.csv</strong></li>
 </ul>
 
 <hr>
@@ -145,17 +145,10 @@ Mean: 0.8142
 </code>
 </pre>
 
-<h3>Step 5: Saving the Models</h3>
-<p>The models are saved using <code>joblib</code>:</p>
-<pre>
-<code>
-from joblib import dump
-
-dump(rf_model, 'random_forest_modelV3.joblib')
-dump(best_xgb, 'xgboost_modelV3.joblib')
-dump(stacking_model, 'stacking_modelV3.joblib')
-</code>
-</pre>
+<h3>Step 5: Adding Results to Power BI</h3>
+<ul>
+    <li>The final predictions and enhanced geographic details were integrated back into the Power BI report for visualization and analysis.</li>
+</ul>
 
 <hr>
 
@@ -163,7 +156,7 @@ dump(stacking_model, 'stacking_modelV3.joblib')
 
 <h3>Input File</h3>
 <ul>
-    <li><strong>Merged_USCensus_Data.csv:</strong> Preprocessed data.</li>
+    <li><strong>Merged_USCensus_Data.csv:</strong> Preprocessed data with demographic features.</li>
 </ul>
 
 <h3>Steps</h3>
@@ -264,19 +257,3 @@ pip install pandas numpy scikit-learn xgboost matplotlib joblib
 <h3>R Packages</h3>
 <p>Install the required packages:</p>
 <pre>
-<code>
-install.packages(c("zipcodeR", "readxl", "writexl", "dplyr"))
-</code>
-</pre>
-
-<hr>
-
-<h2>7. Notes</h2>
-<ul>
-    <li>The project efficiently processes large datasets using chunk-based operations.</li>
-    <li>ZIP codes are formatted to ensure successful merging across all steps.</li>
-    <li>Power BI adjustments aligned the datasets before modeling.</li>
-</ul>
-
-</body>
-</html>
