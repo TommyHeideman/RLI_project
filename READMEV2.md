@@ -3,18 +3,17 @@
     <head>
         <title>Predictive Modeling and Data Cleaning Project</title>
     </head>
-    <body>
-    
+<body>
     <h1><strong>Predictive Modeling and Data Cleaning Project</strong></h1>
     
-    <h2><strong>Project Overview</strong></h2>
+<h2><strong>Project Overview</strong></h2>
     <p>This project involves cleaning, processing, and modeling two datasets:</p>
     <ul>
         <li><strong>RLI Data:</strong> Insurance-related data containing ZIP codes and demographic information.</li>
         <li><strong>US Census Data:</strong> Population and household estimates by ZIP code.</li>
     </ul>
     
-    <h2><strong>Key Steps</strong></h2>
+<h2><strong>Key Steps</strong></h2>
     <ol>
         <li><strong>Clean and merge datasets.</strong>
             <ol>
