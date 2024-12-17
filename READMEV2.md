@@ -18,7 +18,7 @@ This project involves cleaning, processing, and modeling two datasets:
 
 ## 1. Data Cleaning Steps
 
-### I. R Script
+### I. R Script (merging_model_data.R)
 Run in R-Studio and change file paths as needed.
 
 #### **Input Files**
@@ -138,6 +138,9 @@ predictions = loaded_model.predict(X_chunk_scaled)
 
 ### Objective
 Merge predictions with state and city details using the `zipcodeR` library.
+
+### Script
+RLI_datacleaning_master.R
 
 ### **Steps**
 1. Format ZIP Codes:
