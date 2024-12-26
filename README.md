@@ -114,61 +114,83 @@
 <pre><code>
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestRegressor, StackingRegressor
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.linear_model import LinearRegression
-from xgboost import XGBRegressor
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from joblib import dump
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor, StackingRegressor
+from xgboost import XGBRegressor
+import matplotlib.pyplot as plt
+from joblib import dump, load
 
-# Load data
-file_path = "Filtered_Left_Joined_Dataset.csv"
-data = pd.read_csv(file_path)
+# Parameters
+file_path = r"Filtered_Left_Joined_Dataset.csv"
+chunksize = 10000
+columns_to_drop = ['RenewFlag', 'CnclMo', 'NotCancFlag']
+demographic_columns = [...]
+# (list truncated for brevity, include full list in project repository)
 
-# Preprocessing
-X = data.drop(columns=['target_column'])
-y = data['target_column']
+# Load and preprocess data
+X_full = pd.DataFrame()
+y_full = pd.Series(dtype='float64')
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+for chunk in pd.read_csv(file_path, chunksize=chunksize, low_memory=False):
+    chunk = chunk.drop(columns=columns_to_drop, errors='ignore')
+    X_full = pd.concat([X_full, chunk[demographic_columns]], ignore_index=True)
+    y_full = pd.concat([y_full, chunk['PostalCode.Count']], ignore_index=True)
+
+# Handle missing values
+X_full.fillna(X_full.mean(), inplace=True)
+
+# Log transform the target
+y_full_log = np.log1p(y_full)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_full, y_full_log, test_size=0.2, random_state=42)
+
+# Scale features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Random Forest Model
+# Model training: Random Forest
 rf_model = RandomForestRegressor(random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
-# XGBoost Model
-xgb = XGBRegressor(random_state=42)
+# Hyperparameter tuning: XGBoost
+xgb = XGBRegressor(objective='reg:squarederror', random_state=42)
 param_grid = {
-    'n_estimators': [100, 200],
-    'max_depth': [3, 5],
-    'learning_rate': [0.01, 0.1]
+    'n_estimators': [100, 200, 300],
+    'max_depth': [3, 5, 7],
+    'learning_rate': [0.01, 0.1, 0.2],
+    'subsample': [0.8, 1.0],
+    'colsample_bytree': [0.8, 1.0]
 }
-grid_search = GridSearchCV(xgb, param_grid, cv=3)
+
+grid_search = GridSearchCV(estimator=xgb, param_grid=param_grid, cv=5, scoring='r2')
 grid_search.fit(X_train_scaled, y_train)
 
-# Stacking Regressor
+best_xgb = grid_search.best_estimator_
+
+# Stacking model
 stacking_model = StackingRegressor(
-    estimators=[('rf', rf_model), ('xgb', grid_search.best_estimator_)],
+    estimators=[
+        ('rf', rf_model),
+        ('xgb', best_xgb)
+    ],
     final_estimator=LinearRegression()
 )
 stacking_model.fit(X_train_scaled, y_train)
 
-# Evaluation
-predictions = stacking_model.predict(X_test_scaled)
-print("MSE:", mean_squared_error(y_test, predictions))
-print("MAE:", mean_absolute_error(y_test, predictions))
-print("R²:", r2_score(y_test, predictions))
-
-# Save Model
+# Save models
+dump(rf_model, 'random_forest_model.joblib')
+dump(best_xgb, 'xgboost_model.joblib')
 dump(stacking_model, 'stacking_model.joblib')
 </code></pre>
 
 <h2>3. Visualization and Insights</h2>
 <p>Predictions were visualized in an interactive Power BI dashboard, showcasing ZIP codes with high growth potential. The visualization enabled easy exploration by geographic and demographic filters.</p>
-<img src="https://github.com/TommyHeideman/<your-repo-name>/raw/main/PowerBI_map.png" 
+<img src="https://github.com/TommyHeideman/<RLI_project>/raw/main/PowerBI_map.png" 
      alt="Power BI map showing model predictions and comparison to RLI policy counts">
 
 <h2>4. Tools and Technologies</h2>
