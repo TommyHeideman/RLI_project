@@ -192,6 +192,8 @@ dump(stacking_model, 'stacking_model.joblib')
 <p>Predictions were visualized in an interactive Power BI dashboard, showcasing ZIP codes with high growth potential. The visualization enabled easy exploration by geographic and demographic filters.</p>
 <img src="https://github.com/TommyHeideman/RLI_project/raw/main/PowerBI_map.png" 
      alt="Power BI map showing model predictions and comparison to RLI policy counts">
+<img src="https://github.com/TommyHeideman/RLI_project/raw/main/Model_Demographics.png" 
+     alt="Demographics model insights visualization">
 
 <h2>4. Tools and Technologies</h2>
 <ul>
