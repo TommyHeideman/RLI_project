@@ -1,265 +1,148 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Predictive Modeling and Data Cleaning Project</title>
+    <title>Policy Growth Opportunity Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .impact {
+            background: #e7f5ff;
+            padding: 10px;
+            border-left: 4px solid #0056b3;
+            margin: 10px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Predictive Modeling and Data Cleaning Project</h1>
+<h1>Policy Growth Opportunity Analysis</h1>
+
+<div class="impact">
+    <h2>Why This Project Matters</h2>
+    <p>This project identifies untapped opportunities for policy growth by analyzing RLI insurance data alongside U.S. Census demographics. Using predictive modeling, we pinpointed ZIP codes with the highest potential for new policies based on income and demographic factors.</p>
+</div>
 
 <h2>Project Overview</h2>
-<p>This project involves cleaning, processing, and modeling two datasets:</p>
+<p>The goal was to count existing policies in each ZIP code and leverage Census data (income and sex demographics) to train a machine learning model predicting areas of high growth potential. The results were visualized for actionable insights.</p>
 <ul>
-    <li><strong>RLI Data:</strong> Insurance-related data containing ZIP codes and demographic information.</li>
-    <li><strong>US Census Data:</strong> Population and household estimates by ZIP code.</li>
+    <li><strong>Impact:</strong> Empowered stakeholders to optimize policy distribution strategies and target high-opportunity regions.</li>
+    <li><strong>Technologies Used:</strong> Python, R, Power BI, XGBoost, Random Forest, Stacking Regressor.</li>
 </ul>
-<h3>Key Steps</h3>
+
+<h2>Key Steps</h2>
 <ol>
-    <li>Clean and merge datasets.</li>
-    <li>Train machine learning models to predict target variables.</li>
-    <li>Enhance predictions by adding geographic information (state and city) based on ZIP codes.</li>
+    <li>Cleaned and merged insurance and demographic datasets.</li>
+    <li>Trained predictive models to forecast policy counts in unexplored regions.</li>
+    <li>Enhanced predictions by integrating geographic data (state and city).</li>
+    <li>Created interactive Power BI dashboards for stakeholder use.</li>
 </ol>
 
 <hr>
 
-<h2>1. Data Cleaning Steps</h2>
-
-<h3>Input Files</h3>
+<h2>1. Data Cleaning</h2>
 <ul>
-    <li><strong>IOWA-RLI PUP Data.csv:</strong> Original RLI data.</li>
-    <li><strong>USCensus_AgeandSex.csv:</strong> Census demographic data.</li>
+    <li><strong>Standardized:</strong> Reformatted ZIP codes for consistency.</li>
+    <li><strong>Joined:</strong> Merged RLI insurance data with U.S. Census demographics by ZIP code.</li>
+    <li><strong>Output:</strong> A consolidated dataset for modeling and analysis.</li>
 </ul>
 
-<h3>Step 1: Reading and Standardizing RLI Data</h3>
+<h2>2. Machine Learning</h2>
 <ul>
-    <li>Clean column names to <strong>snake_case</strong>.</li>
-    <li>Standardize spacing in the <code>producer_entity</code> column:</li>
+    <li><strong>Models Used:</strong>
+        <ul>
+            <li>Random Forest: Baseline performance benchmark.</li>
+            <li>XGBoost: Fine-tuned for high predictive accuracy.</li>
+            <li>Stacking Regressor: Combined models for superior results.</li>
+        </ul>
+    </li>
+    <li><strong>Key Metrics:</strong>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>MSE</th>
+                    <th>MAE</th>
+                    <th>R² Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Random Forest</td>
+                    <td>2118.23</td>
+                    <td>18.33</td>
+                    <td>0.694</td>
+                </tr>
+                <tr>
+                    <td>XGBoost</td>
+                    <td>1413.67</td>
+                    <td>15.04</td>
+                    <td>0.796</td>
+                </tr>
+                <tr>
+                    <td>Stacking Regressor</td>
+                    <td>1376.02</td>
+                    <td>14.94</td>
+                    <td>0.801</td>
+                </tr>
+            </tbody>
+        </table>
+    </li>
 </ul>
-<pre>
-<code>
-library(dplyr)
-library(stringr)
 
-RLI_original_data <- RLI_original_data %>%
-  mutate(producer_entity = str_squish(producer_entity))
-</code>
-</pre>
+<h2>3. Visualization and Insights</h2>
+<p>Predictions were visualized in an interactive Power BI dashboard, showcasing ZIP codes with high growth potential. The visualization enabled easy exploration by geographic and demographic filters.</p>
+<img src="https://github.com/TommyHeideman/<your-repo-name>/raw/main/PowerBI_map.png" 
+     alt="Power BI map showing model predictions and comparison to RLI policy counts">
 
-<h3>Step 2: Formatting ZIP Codes</h3>
+<h2>4. Tools and Technologies</h2>
 <ul>
-    <li>Ensure ZIP codes are <strong>5-digit strings</strong> with leading zeros:</li>
+    <li><strong>Python:</strong> Data cleaning, feature engineering, and machine learning with libraries like Pandas, Scikit-learn, and XGBoost.</li>
+    <li><strong>R:</strong> Data merging and formatting with libraries such as <code>dplyr</code> and <code>zipcodeR</code>.</li>
+    <li><strong>Power BI:</strong> Created interactive dashboards for data-driven decision-making.</li>
 </ul>
-<pre>
-<code>
-RLI_original_data <- RLI_original_data %>%
-  mutate(postal_code = str_pad(as.character(postal_code), width = 5, pad = "0"))
 
-census_data <- census_data %>%
-  mutate(ZIP_CODE = str_pad(as.character(ZIP_CODE), width = 5, pad = "0"))
-</code>
-</pre>
-
-<h3>Step 3: Merging RLI and Census Data</h3>
+<h2>5. Key Deliverables</h2>
 <ul>
-    <li>Merge RLI data with Census data on ZIP codes using a <strong>left join</strong>:</li>
-</ul>
-<pre>
-<code>
-merged_data <- RLI_original_data %>%
-  left_join(census_data, by = c("postal_code" = "ZIP_CODE"))
-</code>
-</pre>
-<p>Save the resulting dataset as:</p>
-<ul>
-    <li><strong>RLI_combined_Census_Sex.csv</strong></li>
+    <li><strong>Cleaned Datasets:</strong> Prepared for further analysis or integration.</li>
+    <li><strong>Predictive Models:</strong> Saved in joblib format for reproducibility.</li>
+    <li><strong>Interactive Dashboard:</strong> Delivered actionable insights to stakeholders.</li>
+    <li><strong>Final Report:</strong> For more details, refer to the <a href="final_report_document_link">Final Project Report</a>.</li>
 </ul>
 
 <hr>
 
-<h2>2. Machine Learning Modeling</h2>
-
-<h3>Step 1: Data Preprocessing</h3>
-<ul>
-    <li>Drop irrelevant columns:</li>
-    <pre><code>'RenewFlag', 'CnclMo', 'NotCancFlag'</code></pre>
-    <li>Log-transform the target variable to normalize skewness:</li>
-    <pre><code>
-y_full_log = np.log1p(y_full)
-</code></pre>
-</ul>
-
-<h3>Step 2: Model Training</h3>
-<ul>
-    <li><strong>Models Trained:</strong></li>
-    <ol>
-        <li><strong>Random Forest:</strong> Baseline model.</li>
-        <li><strong>XGBoost:</strong> Hyperparameter-tuned model using Grid Search.</li>
-        <li><strong>Stacking Regressor:</strong> Combines Random Forest and XGBoost with Linear Regression as the final estimator.</li>
-    </ol>
-</ul>
-<pre>
-<code>
-from sklearn.ensemble import RandomForestRegressor
-from xgboost import XGBRegressor
-from sklearn.ensemble import StackingRegressor
-from sklearn.linear_model import LinearRegression
-
-rf_model = RandomForestRegressor(random_state=42)
-rf_model.fit(X_train_scaled, y_train)
-
-xgb_model = XGBRegressor(objective='reg:squarederror', random_state=42)
-xgb_model.fit(X_train_scaled, y_train)
-
-stacking_model = StackingRegressor(
-    estimators=[('rf', rf_model), ('xgb', xgb_model)],
-    final_estimator=LinearRegression()
-)
-stacking_model.fit(X_train_scaled, y_train)
-</code>
-</pre>
-
-<h3>Step 3: Model Performance</h3>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Model</th>
-            <th>MSE</th>
-            <th>MAE</th>
-            <th>R² Score</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Random Forest</td>
-            <td>2118.23</td>
-            <td>18.33</td>
-            <td>0.694</td>
-        </tr>
-        <tr>
-            <td>XGBoost</td>
-            <td>1413.67</td>
-            <td>15.04</td>
-            <td>0.796</td>
-        </tr>
-        <tr>
-            <td>Stacking Model</td>
-            <td>1376.02</td>
-            <td>14.94</td>
-            <td>0.801</td>
-        </tr>
-    </tbody>
-</table>
-
-<h3>Step 4: Cross-Validation</h3>
-<p>XGBoost Cross-Validation R² Scores:</p>
-<pre>
-<code>[0.8188, 0.8110, 0.8128, 0.8147, 0.8137]
-Mean: 0.8142
-</code>
-</pre>
-
-<h3>Step 5: Saving the Models</h3>
-<p>The trained models were saved as:</p>
-<ul>
-    <li><strong>random_forest_modelV3.joblib</strong></li>
-    <li><strong>xgboost_modelV3.joblib</strong></li>
-    <li><strong>stacking_modelV3.joblib</strong></li>
-</ul>
-<pre>
-<code>
-from joblib import dump
-
-dump(rf_model, 'random_forest_modelV3.joblib')
-dump(xgb_model, 'xgboost_modelV3.joblib')
-dump(stacking_model, 'stacking_modelV3.joblib')
-</code>
-</pre>
-
-<hr>
-
-<h2>3. Predictions on New Data</h2>
-
-<h3>Steps</h3>
+<h2>How to Run</h2>
 <ol>
-    <li>Standardize columns to match training data.</li>
-    <li>Make predictions using the XGBoost model:</li>
+    <li>Install dependencies:
+        <pre><code>pip install pandas numpy scikit-learn xgboost matplotlib joblib</code></pre>
+    </li>
+    <li>Download the dataset and scripts from the repository.</li>
+    <li>Run preprocessing and modeling scripts, then visualize results using Power BI.</li>
 </ol>
-<pre>
-<code>
-data_to_scale = chunk.reindex(columns=expected_columns, fill_value=0)
-predictions = loaded_model.predict(X_chunk_scaled)
-</code>
-</pre>
 
-<h3>Output File</h3>
-<ul>
-    <li><strong>predictions.csv</strong>: Contains the predicted results.</li>
-</ul>
-
-<hr>
-
-<h2>4. Enhancing Predictions with Geographic Information</h2>
-
-<h3>Steps</h3>
-<ol>
-    <li>Format ZIP Codes:</li>
-</ol>
-<pre>
-<code>
-data <- data %>%
-  mutate(ZIP_CODE = sprintf("%05d", as.numeric(ZIP_CODE)))
-</code>
-</pre>
-
-<ol start="2">
-    <li>Load ZIP Code Database:</li>
-</ol>
-<pre>
-<code>
-zip_details <- zipcodeR::zip_code_db %>%
-  mutate(zipcode = sprintf("%05s", as.character(zipcode)))
-</code>
-</pre>
-
-<ol start="3">
-    <li>Left Join to Add State/City:</li>
-</ol>
-<pre>
-<code>
-data_with_states_regions <- data %>%
-  left_join(zip_details, by = c("ZIP_CODE" = "zipcode"))
-</code>
-</pre>
-
-<p>The enhanced predictions are saved to:</p>
-<ul>
-    <li><strong>Data_with_States_and_Regions.xlsx</strong></li>
-</ul>
-
-<hr>
-
-<h2>5. Integration into Power BI</h2>
-<p>The final predictions, along with enhanced geographic information, were added back into the Power BI report for further visualization and reporting. This allowed stakeholders to analyze predictions alongside state and city-level insights directly in the Power BI dashboard.</p>
-
-<hr>
-
-<h2>6. Dependencies</h2>
-
-<h3>Python Libraries</h3>
-<p>Install the required libraries:</p>
-<pre>
-<code>
-pip install pandas numpy scikit-learn xgboost matplotlib joblib
-</code>
-</pre>
-
-<h3>R Packages</h3>
-<p>Install the required packages:</p>
-<pre>
-<code>
-install.packages(c("zipcodeR", "readxl", "writexl", "dplyr"))
-</code>
-</pre>
+<h2>Contact</h2>
+<p>If you have any questions or would like to discuss this project further, feel free to connect with me on LinkedIn or email me directly.</p>
 
 </body>
 </html>
