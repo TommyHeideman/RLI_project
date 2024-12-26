@@ -110,6 +110,62 @@
     </li>
 </ul>
 
+<h3>Python Modeling Code</h3>
+<pre><code>
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.ensemble import RandomForestRegressor, StackingRegressor
+from sklearn.linear_model import LinearRegression
+from xgboost import XGBRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from joblib import dump
+
+# Load data
+file_path = "Filtered_Left_Joined_Dataset.csv"
+data = pd.read_csv(file_path)
+
+# Preprocessing
+X = data.drop(columns=['target_column'])
+y = data['target_column']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Random Forest Model
+rf_model = RandomForestRegressor(random_state=42)
+rf_model.fit(X_train_scaled, y_train)
+
+# XGBoost Model
+xgb = XGBRegressor(random_state=42)
+param_grid = {
+    'n_estimators': [100, 200],
+    'max_depth': [3, 5],
+    'learning_rate': [0.01, 0.1]
+}
+grid_search = GridSearchCV(xgb, param_grid, cv=3)
+grid_search.fit(X_train_scaled, y_train)
+
+# Stacking Regressor
+stacking_model = StackingRegressor(
+    estimators=[('rf', rf_model), ('xgb', grid_search.best_estimator_)],
+    final_estimator=LinearRegression()
+)
+stacking_model.fit(X_train_scaled, y_train)
+
+# Evaluation
+predictions = stacking_model.predict(X_test_scaled)
+print("MSE:", mean_squared_error(y_test, predictions))
+print("MAE:", mean_absolute_error(y_test, predictions))
+print("R²:", r2_score(y_test, predictions))
+
+# Save Model
+dump(stacking_model, 'stacking_model.joblib')
+</code></pre>
+
 <h2>3. Visualization and Insights</h2>
 <p>Predictions were visualized in an interactive Power BI dashboard, showcasing ZIP codes with high growth potential. The visualization enabled easy exploration by geographic and demographic filters.</p>
 <img src="https://github.com/TommyHeideman/<your-repo-name>/raw/main/PowerBI_map.png" 
