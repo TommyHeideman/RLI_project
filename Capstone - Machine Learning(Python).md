@@ -89,7 +89,7 @@
 
 <h3>Python Modeling Code</h3>
 <pre><code>
-# Full code for model training and predictions (refer to project repository).
+# Full code for model training and predictions (refer to RLI_modeling.py).
 </code></pre>
 
 <h2>3. Visualization and Insights</h2>
