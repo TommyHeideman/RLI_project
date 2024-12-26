@@ -78,21 +78,14 @@ merged_data <- RLI_original_data %>%
 
 <h2>2. Machine Learning Modeling</h2>
 
-<h3>Input File</h3>
-<ul>
-    <li><strong>Filtered_Left_Joined_Dataset.csv:</strong> Preprocessed dataset for modeling.</li>
-</ul>
-
 <h3>Step 1: Data Preprocessing</h3>
 <ul>
-    <li>Drop irrelevant columns:
-        <pre><code>'RenewFlag', 'CnclMo', 'NotCancFlag'</code></pre>
-    </li>
-    <li>Log-transform the target variable to normalize skewness:
-        <pre><code>
+    <li>Drop irrelevant columns:</li>
+    <pre><code>'RenewFlag', 'CnclMo', 'NotCancFlag'</code></pre>
+    <li>Log-transform the target variable to normalize skewness:</li>
+    <pre><code>
 y_full_log = np.log1p(y_full)
 </code></pre>
-    </li>
 </ul>
 
 <h3>Step 2: Model Training</h3>
@@ -104,6 +97,26 @@ y_full_log = np.log1p(y_full)
         <li><strong>Stacking Regressor:</strong> Combines Random Forest and XGBoost with Linear Regression as the final estimator.</li>
     </ol>
 </ul>
+<pre>
+<code>
+from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
+from sklearn.ensemble import StackingRegressor
+from sklearn.linear_model import LinearRegression
+
+rf_model = RandomForestRegressor(random_state=42)
+rf_model.fit(X_train_scaled, y_train)
+
+xgb_model = XGBRegressor(objective='reg:squarederror', random_state=42)
+xgb_model.fit(X_train_scaled, y_train)
+
+stacking_model = StackingRegressor(
+    estimators=[('rf', rf_model), ('xgb', xgb_model)],
+    final_estimator=LinearRegression()
+)
+stacking_model.fit(X_train_scaled, y_train)
+</code>
+</pre>
 
 <h3>Step 3: Model Performance</h3>
 <table border="1">
@@ -152,15 +165,19 @@ Mean: 0.8142
     <li><strong>xgboost_modelV3.joblib</strong></li>
     <li><strong>stacking_modelV3.joblib</strong></li>
 </ul>
+<pre>
+<code>
+from joblib import dump
+
+dump(rf_model, 'random_forest_modelV3.joblib')
+dump(xgb_model, 'xgboost_modelV3.joblib')
+dump(stacking_model, 'stacking_modelV3.joblib')
+</code>
+</pre>
 
 <hr>
 
 <h2>3. Predictions on New Data</h2>
-
-<h3>Input File</h3>
-<ul>
-    <li><strong>Merged_USCensus_Data.csv:</strong> Preprocessed data with demographic features.</li>
-</ul>
 
 <h3>Steps</h3>
 <ol>
@@ -183,9 +200,6 @@ predictions = loaded_model.predict(X_chunk_scaled)
 
 <h2>4. Enhancing Predictions with Geographic Information</h2>
 
-<h3>Objective</h3>
-<p>Merge predictions with <strong>state</strong> and <strong>city</strong> details using the <code>zipcodeR</code> library.</p>
-
 <h3>Steps</h3>
 <ol>
     <li>Format ZIP Codes:</li>
@@ -193,8 +207,7 @@ predictions = loaded_model.predict(X_chunk_scaled)
 <pre>
 <code>
 data <- data %>%
-  mutate(ZIP_CODE = sprintf("%05d", as.numeric(ZIP_CODE))) %>%
-  mutate(ZIP_CODE = as.factor(ZIP_CODE))
+  mutate(ZIP_CODE = sprintf("%05d", as.numeric(ZIP_CODE)))
 </code>
 </pre>
 
@@ -204,8 +217,7 @@ data <- data %>%
 <pre>
 <code>
 zip_details <- zipcodeR::zip_code_db %>%
-  mutate(zipcode = sprintf("%05s", as.character(zipcode))) %>%
-  mutate(zipcode = as.factor(zipcode))
+  mutate(zipcode = sprintf("%05s", as.character(zipcode)))
 </code>
 </pre>
 
@@ -219,9 +231,6 @@ data_with_states_regions <- data %>%
 </code>
 </pre>
 
-<ol start="4">
-    <li>Save Final Output:</li>
-</ol>
 <p>The enhanced predictions are saved to:</p>
 <ul>
     <li><strong>Data_with_States_and_Regions.xlsx</strong></li>
@@ -251,15 +260,6 @@ pip install pandas numpy scikit-learn xgboost matplotlib joblib
 install.packages(c("zipcodeR", "readxl", "writexl", "dplyr"))
 </code>
 </pre>
-
-<hr>
-
-<h2>7. Notes</h2>
-<ul>
-    <li>The project efficiently processes large datasets using chunk-based operations.</li>
-    <li>ZIP codes are formatted to ensure successful merging across all steps.</li>
-    <li>Power BI adjustments aligned the datasets before modeling.</li>
-</ul>
 
 </body>
 </html>
