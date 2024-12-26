@@ -43,6 +43,9 @@
     <p>This project identifies untapped opportunities for policy growth by analyzing RLI insurance data alongside U.S. Census demographics. Using predictive modeling, we pinpointed ZIP codes with the highest potential for new policies based on income and demographic factors.</p>
 </div>
 
+<h2>Introduction</h2>
+<p>This project aimed to empower RLI Insurance with actionable insights to optimize their personal umbrella policy distribution. By analyzing existing policy data and U.S. Census demographics, the initiative focused on identifying growth opportunities in ZIP codes with high potential. Predictive models were developed to forecast areas with untapped potential, and results were visualized in an interactive Power BI dashboard, providing stakeholders with clear and actionable insights to refine their strategies.</p>
+
 <h2>Project Overview</h2>
 <p>The goal was to count existing policies in each ZIP code and leverage Census data (income and sex demographics) to train a machine learning model predicting areas of high growth potential. The results were visualized for actionable insights.</p>
 <ul>
@@ -112,80 +115,7 @@
 
 <h3>Python Modeling Code</h3>
 <pre><code>
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor, StackingRegressor
-from xgboost import XGBRegressor
-import matplotlib.pyplot as plt
-from joblib import dump, load
-
-# Parameters
-file_path = r"Filtered_Left_Joined_Dataset.csv"
-chunksize = 10000
-columns_to_drop = ['RenewFlag', 'CnclMo', 'NotCancFlag']
-demographic_columns = [...]
-# (list truncated for brevity, include full list in project repository)
-
-# Load and preprocess data
-X_full = pd.DataFrame()
-y_full = pd.Series(dtype='float64')
-
-for chunk in pd.read_csv(file_path, chunksize=chunksize, low_memory=False):
-    chunk = chunk.drop(columns=columns_to_drop, errors='ignore')
-    X_full = pd.concat([X_full, chunk[demographic_columns]], ignore_index=True)
-    y_full = pd.concat([y_full, chunk['PostalCode.Count']], ignore_index=True)
-
-# Handle missing values
-X_full.fillna(X_full.mean(), inplace=True)
-
-# Log transform the target
-y_full_log = np.log1p(y_full)
-
-# Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X_full, y_full_log, test_size=0.2, random_state=42)
-
-# Scale features
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-# Model training: Random Forest
-rf_model = RandomForestRegressor(random_state=42)
-rf_model.fit(X_train_scaled, y_train)
-
-# Hyperparameter tuning: XGBoost
-xgb = XGBRegressor(objective='reg:squarederror', random_state=42)
-param_grid = {
-    'n_estimators': [100, 200, 300],
-    'max_depth': [3, 5, 7],
-    'learning_rate': [0.01, 0.1, 0.2],
-    'subsample': [0.8, 1.0],
-    'colsample_bytree': [0.8, 1.0]
-}
-
-grid_search = GridSearchCV(estimator=xgb, param_grid=param_grid, cv=5, scoring='r2')
-grid_search.fit(X_train_scaled, y_train)
-
-best_xgb = grid_search.best_estimator_
-
-# Stacking model
-stacking_model = StackingRegressor(
-    estimators=[
-        ('rf', rf_model),
-        ('xgb', best_xgb)
-    ],
-    final_estimator=LinearRegression()
-)
-stacking_model.fit(X_train_scaled, y_train)
-
-# Save models
-dump(rf_model, 'random_forest_model.joblib')
-dump(best_xgb, 'xgboost_model.joblib')
-dump(stacking_model, 'stacking_model.joblib')
+# Full code for model training and predictions (refer to project repository).
 </code></pre>
 
 <h2>3. Visualization and Insights</h2>
@@ -195,14 +125,30 @@ dump(stacking_model, 'stacking_model.joblib')
 <img src="https://github.com/TommyHeideman/RLI_project/raw/main/Model_Demographics.png" 
      alt="Demographics model insights visualization">
 
-<h2>4. Tools and Technologies</h2>
+<h3>Power BI Dashboard Features</h3>
 <ul>
-    <li><strong>Python:</strong> Data cleaning, feature engineering, and machine learning with libraries like Pandas, Scikit-learn, and XGBoost.</li>
-    <li><strong>R:</strong> Data merging and formatting with libraries such as <code>dplyr</code> and <code>zipcodeR</code>.</li>
-    <li><strong>Power BI:</strong> Created interactive dashboards for data-driven decision-making.</li>
+    <li>Interactive map displaying ZIP codes with the top 100 growth opportunities.</li>
+    <li>Filter options by state, region, income, and demographic segments.</li>
+    <li>Designed for actionable insights and stakeholder decision-making.</li>
 </ul>
 
-<h2>5. Key Deliverables</h2>
+<h2>4. Recommendations</h2>
+<p>Based on our findings, we recommend:</p>
+<ul>
+    <li>Focusing marketing and distribution efforts on high-income, densely populated regions with a significant population aged 60–80.</li>
+    <li>Expanding successful strategies from high-performing areas (e.g., South Dakota, Carolinas) to underperforming regions.</li>
+    <li>Leveraging predictive insights to strengthen carrier partnerships and optimize distribution strategies.</li>
+</ul>
+
+<h2>5. Limitations</h2>
+<ul>
+    <li>The model assumes that areas with the highest policy counts are optimal targets, not accounting for policy type differences.</li>
+    <li>Data snapshot-based analysis; not integrated with a real-time pipeline.</li>
+    <li>High computational requirements due to extensive column selection.</li>
+    <li><strong>NDA Restrictions:</strong> Due to confidentiality agreements, only summary results are shared, with no access to proprietary or provider-specific data.</li>
+</ul>
+
+<h2>6. Key Deliverables</h2>
 <ul>
     <li><strong>Cleaned Datasets:</strong> Prepared for further analysis or integration.</li>
     <li><strong>Predictive Models:</strong> Saved in joblib format for reproducibility.</li>
